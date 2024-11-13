@@ -1,21 +1,17 @@
-// public/script.js
 const socket = io();
+const messageInput = document.getElementById('message');
+const messagesDiv = document.getElementById('messages');
 
-const form = document.getElementById('form');
-const input = document.getElementById('input');
-const messages = document.getElementById('messages');
-
-form.addEventListener('submit', function(e) {
-  e.preventDefault();
-  if (input.value) {
-    socket.emit('chat message', input.value);
-    input.value = '';
-  }
+socket.on('chat message', (msg) => {
+  const message = document.createElement('div');
+  message.textContent = msg;
+  messagesDiv.appendChild(message);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
 });
 
-socket.on('chat message', function(msg) {
-  const item = document.createElement('li');
-  item.textContent = msg;
-  messages.appendChild(item);
-  window.scrollTo(0, document.body.scrollHeight);
+document.getElementById('chatForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const msg = messageInput.value;
+  socket.emit('chat message', msg);
+  messageInput.value = '';
 });
